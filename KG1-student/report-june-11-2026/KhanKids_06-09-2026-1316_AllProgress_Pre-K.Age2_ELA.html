@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Khan Academy Kids Report</title>
+</head>
+
+<style type="text/css">
+  h2,
+  h3,
+  h4,
+  h5 {
+    margin-top: 5px;
+    margin-bottom: 0px;
+    color: #27447a;
+  }
+
+  #tableHeader {
+    max-height: 52px;
+  }
+
+  #tableBody {
+    visibility: hidden;
+  }
+
+  .triangle-down {
+    margin-top: 6px;
+    margin-bottom: 2px;
+    margin-right: 0px;
+    margin-left: -21px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #969EAF;
+    float: left;
+  }
+
+  .triangle-right {
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-right: 0px;
+    margin-left: -18px;
+    border-top: 6px solid transparent;
+    border-left: 6px solid #969EAF;
+    border-bottom: 6px solid transparent;
+    float: left;
+  }
+
+  .scrolltable {
+    overflow-x: scroll;
+    height: 100%;
+    display: flex;
+    display: -webkit-flex;
+    flex-direction: column;
+    -webkit-flex-direction: column;
+  }
+
+  .scrolltable>.header {}
+
+  .scrolltable>.body {
+    width: -webkit-fit-content;
+    overflow-y: scroll;
+    flex: 1;
+    -webkit-flex: 1;
+  }
+
+  #constrainer {
+    width: 100vw;
+    height: 85vh;
+    border: 1px solid #969EAF;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    padding: 0;
+    margin: 0;
+  }
+
+  body {
+    padding-left: 24px;
+    padding-top: 20px;
+    margin: 0;
+  }
+
+  body {
+    font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  }
+
+  thead,
+  tbody,
+  tr {
+    display: contents;
+  }
+
+  td,
+  th {
+    padding: 13px;
+    overflow: hidden;
+    font-size: 0.9rem;
+    border: 1px solid;
+  }
+
+  td {
+    word-break: break-word;
+    white-space: wrap;
+    overflow-wrap: wrap;
+    border-color: #969EAF20 #969EAF85 #969EAF20 #969EAF85;
+  }
+
+  th {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background: white;
+    text-align: center;
+    font-weight: bold;
+    color: #27447a;
+    padding: 16px;
+    position: relative;
+    border-color: #969EAF85;
+  }
+
+  td:first-child,
+  th:first-child,
+  td:nth-child(1),
+  th:nth-child(1) {
+    border-left-color: #969EAF85;
+  }
+
+  td:first-child,
+  th:first-child,
+  td:last-child,
+  th:last-child {
+    border-right-color:#969EAF85;
+  }
+
+  .rowDD {
+    border-top: 1px solid #969EAF;
+    border-bottom: 1px solid #969EAF85;
+  }
+
+  .rowDL {
+    border-top: 1px solid #969EAF;
+    border-bottom: 1px solid #969EAF20;
+  }
+
+  .rowLD {
+    border-top: 1px solid #969EAF20;
+    border-bottom: 1px solid #969EAF20;
+  }
+
+  .student {
+    text-align: center;
+  }
+
+  .score {
+    font-size: 0.75rem;
+  }
+
+  .resize-handle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: #ccced6;
+    opacity: 0;
+    width: 3px;
+    cursor: col-resize;
+  }
+
+  .resize-handle:hover,
+  .header--being-resized .resize-handle {
+    opacity: 1.0;
+  }
+
+  th:hover .resize-handle {
+    opacity: 0.75;
+  }
+
+  td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #8991A0;
+  }
+
+  .bold {
+    font-weight: bold;
+  }
+
+  .lightGray {
+    color: #DFE1E7
+  }
+
+  .darkGray {
+    color: #969EAF
+  }
+
+  .orange {
+    color: #e17f60
+  }
+
+  .green {
+    color: #82c77d
+  }
+
+  .yellow {
+    color: #f6c24f
+  }
+
+  .blue {
+    color: #27447a
+  }
+
+  .clickable {
+    cursor: pointer;
+  }
+
+  .level1 {
+    font-weight: bold;
+    color: #8991A0
+  }
+
+  .level2 {
+    cursor: pointer;
+    padding-left: 33px;
+    font-weight: bold;
+    color: #8991A0
+  }
+
+  .level3 {
+    padding-left: 53px;
+    font-weight: bold;
+    color: #8991A0
+  }
+
+  .level4 {
+    cursor: pointer;
+    padding-left: 73px;
+    color: #27447a
+  }
+
+  .level6 {
+    padding-left: 73px;
+    color: #27447a
+  }
+
+  .level5 {
+    padding-left: 93px;
+    color: #8991A0
+  }
+
+  table {
+    min-width: 100vw;
+    width: auto;
+    flex: 1;
+    display: grid;
+    border-collapse: collapse;
+    grid-template-columns:
+      minmax(300px, 3.33fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr)
+    }
+</style>
+
+<body onload="onload()">
+  <h3>All Progress, Pre-K.Age2 : ELA, 06-09-2026, Ms. Abc&apos;s Kg1, Khan Academy Kids</h3>
+  <h5>&nbsp</h5>
+
+  <div id="constrainer">
+    <div class="scrolltable">
+      <table id="tableHeader" class="header">
+        <thead>
+          <tr>
+            <th><span class="resize-handle"></span></th>
+            <th>Bemenet<span class="resize-handle student"></span></th>
+            <th>Dawit<span class="resize-handle student"></span></th>
+            <th>Kidst<span class="resize-handle student"></span></th>
+            <th>Nataniyem<span class="resize-handle student"></span></th>
+            <th>Temsgen<span class="resize-handle student"></span></th>
+          </tr>
+        </thead>
+      </table>
+      <div class="body">
+        <table id="tableBody">
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    const numStudents = 5;
+    const dataRows = [
+      "1	Preschool (Age 2): ELA	1/165,0/165,0/165,10/165,0/165",
+      "2	Reading Foundational Skills	0/31,0/31,0/31,0/31,0/31",
+      "3	Print Concepts: Parts of a Book	0/2,0/2,0/2,0/2,0/2",
+      "4	Title &amp; Author	",
+      "5	Main	",
+      "5	Practice 1	",
+      "5	Practice 2	",
+      "5	Basic	",
+      "4	Book Pages	",
+      "5	Main	",
+      "5	Practice 1	",
+      "5	Practice 2	",
+      "5	Basic	",
+      "3	Print Concepts: Words	0/2,0/2,0/2,0/2,0/2",
+      "4	Words on Signs 1	",
+      "5	Main	",
+      "5	Practice 1	",
+      "5	Practice 2	",
+      "4	Words on Signs 2	",
+      "5	Main	",
+      "5	Practice 1	",
+      "5	Practice 2	",
+      "3	Phonological Awareness: Rhyming	0/1,0/1,0/1,0/1,0/1",
+      "4	Rhyming	",
+      "5	Main	",
+      "5	Practice 1	",
+      "5	Practice 2	",
+      "5	Basic	100,,,,",
+      "3	Phonics: Letters &amp; Sounds	0/26,0/26,0/26,0/26,0/26",
+      "6	Letter A	",
+      "6	Letter B	",
+      "6	Letter C	",
+      "6	Letter D	",
+      "6	Letter E	",
+      "6	Letter F	",
+      "6	Letter G	",
+      "6	Letter H	",
+      "6	Letter I	",
+      "6	Letter J	",
+      "6	Letter K	",
+      "6	Letter L	",
+      "6	Letter M	",
+      "6	Letter N	",
+      "6	Letter O	",
+      "6	Letter P	",
+      "6	Letter Q	",
+      "6	Letter R	",
+      "6	Letter S	",
+      "6	Letter T	",
+      "6	Letter U	",
+      "6	Letter V	",
+      "6	Letter W	",
+      "6	Letter X	",
+      "6	Letter Y	",
+      "6	Letter Z	",
+      "2	Writing	0/5,0/5,0/5,5/5,0/5",
+      "3	Writing Lines, Shapes	0/5,0/5,0/5,5/5,0/5",
+      "6	Draw Lines	,,,V,",
+      "6	Horizontal Lines	,,,V,",
+      "6	Draw a Circle 1	,,,V,",
+      "6	More Lines	,,,V,",
+      "6	Draw a Circle 2	,,,V,",
+      "2	Language	0/13,0/13,0/13,2/13,0/13",
+      "3	Vocabulary &amp; Objects	0/10,0/10,0/10,2/10,0/10",
+      "4	Animals	,,,83,",
+      "5	Main	,,,83,",
+      "5	Practice 1	",
+      "5	Practice 2	,,,85,",
+      "4	Vehicles	",
+      "5	Main	",
+      "5	Practice 1	",
+      "5	Practice 2	",
+      "4	Food	",
+      "5	Main	",
+      "5	Practice 1	",
+      "6	Around the House	",
+      "4	Animals &amp; Colors	",
+      "5	Main	",
+      "5	Practice 1	",
+      "5	Practice 2	",
+      "4	Weather	",
+      "5	Main	",
+      "5	Practice 1	",
+      "5	Practice 2	",
+      "4	Fruit	",
+      "5	Main	",
+      "5	Practice 1	",
+      "4	Jungle Animals	,,,88,",
+      "5	Main	,,,88,",
+      "5	Practice 1	",
+      "5	Practice 2	",
+      "6	Kitchen	",
+      "4	Outdoors	",
+      "5	Main	",
+      "5	Practice	",
+      "3	Opposites	0/3,0/3,0/3,0/3,0/3",
+      "6	Opposites 1	",
+      "6	Opposites 2	",
+      "6	Opposites 3	",
+      "2	Reading Literature	1/52,0/52,0/52,1/52,0/52",
+      "3	Early Readers	0/21,0/21,0/21,0/21,0/21",
+      "6	Mud	",
+      "6	Sad Ollo	",
+      "6	The Big Bed	",
+      "6	Reya&apos;s Bug	",
+      "6	What Is It?	",
+      "6	Jam in the Vat	",
+      "6	So Hot	",
+      "6	Hop Hop Hop	",
+      "6	The Cup Is Up	",
+      "6	Look at My Pen	",
+      "6	Look at It Go	",
+      "6	Come On	",
+      "6	Peck&apos;s Big Day	",
+      "6	Gum on the Rug	",
+      "6	Fun to Read	",
+      "6	The Big Fish	",
+      "6	The Box	",
+      "6	Race to the Lake	",
+      "6	A Nice Day	",
+      "6	Ollo&apos;s Bike	",
+      "6	Peck Plays a Tune	",
+      "3	Stories	0/5,0/5,0/5,0/5,0/5",
+      "6	Play Ball	",
+      "6	Something New	",
+      "6	Why	",
+      "6	Being Together	",
+      "6	Cool Beans	",
+      "3	Alphabet Books	1/26,0/26,0/26,1/26,0/26",
+      "6	Astronaut and Ant	",
+      "6	What Baby Wants	",
+      "6	Who Ate the Cake?	",
+      "6	Behind the Door	",
+      "6	Elephants	",
+      "6	Frog and the Fly	",
+      "6	Grasshoppers	",
+      "6	Hello, Friends!	",
+      "6	Into the Igloo	",
+      "6	J is for Jam	",
+      "6	Kitten and Kite	",
+      "6	Look in the Leaves	",
+      "6	Monkey and Mice	V,,,V,",
+      "6	Sandy&apos;s Nose	",
+      "6	Off the Rug	",
+      "6	Whose Paws?	",
+      "6	The Queen&apos;s Quilt	",
+      "6	Rabbits	",
+      "6	I&apos;m a Spider	",
+      "6	The Truck Can Go	",
+      "6	Under the Umbrella	",
+      "6	Very Loud	",
+      "6	In the Water	",
+      "6	On the Box	",
+      "6	How Many Yaks?	",
+      "6	Zebra	",
+      "2	Reading Informational Text	0/64,0/64,0/64,2/64,0/64",
+      "3	Non-Fiction: Animals	0/43,0/43,0/43,0/43,0/43",
+      "6	Baby Dogs	",
+      "6	Baby Horses	",
+      "6	Baby Tigers	",
+      "6	Baby Ducks	",
+      "6	Baby Pigs	",
+      "6	Baby Cheetahs	",
+      "6	Baby Cats	",
+      "6	Baby Pandas	",
+      "6	Baby Rabbits	",
+      "6	Baby Bears	",
+      "6	Baby Elephants	",
+      "6	Baby Koalas	",
+      "6	Salamanders	",
+      "6	Baby Giraffes	",
+      "6	Baby Hippos	",
+      "6	Baby Monkeys	",
+      "6	Baby Lions	",
+      "6	Baby Gorillas	",
+      "6	Bats	",
+      "6	Moose	",
+      "6	Baby Owls	",
+      "6	Red Pandas	",
+      "6	Peacocks	",
+      "6	Cockroaches	",
+      "6	Kangaroos	",
+      "6	Sea Otters	",
+      "6	Snakes	",
+      "6	Hummingbirds	",
+      "6	Baby Penguins	",
+      "6	Hedgehogs	",
+      "6	Tree Frogs	",
+      "6	Chameleons	",
+      "6	Spider Monkeys	",
+      "6	Flamingos	",
+      "6	Raccoons	",
+      "6	Wild Turkeys	",
+      "6	Butterflies	",
+      "6	Seal Pups	",
+      "6	Orangutans	",
+      "6	Toucans	",
+      "6	Polar Bears	",
+      "6	Weasels	",
+      "6	Baby Zebras	",
+      "3	Non-Fiction: Vehicles	0/7,0/7,0/7,2/7,0/7",
+      "6	Monster Cars	,,,V,",
+      "6	Monster Trucks	,,,V,",
+      "6	Monster Diggers	",
+      "6	Monster Trains	",
+      "6	Monster Dump Truck	",
+      "6	Monster Ships	",
+      "6	Monster Cranes	",
+      "3	National Geographic Young Explorer	0/14,0/14,0/14,0/14,0/14",
+      "6	Leaf Cutter Ants	",
+      "6	Seeds Grow	",
+      "6	Food for Fido	",
+      "6	Looking at Eggs	",
+      "6	Baby on Board	",
+      "6	Out at Night	",
+      "6	Animal Groups	",
+      "6	Walk with Camels	",
+      "6	Bird Beaks	",
+      "6	Beaver Builders	",
+      "6	Drip Drop	",
+      "6	On the Move	",
+      "6	Plants on My Plate	",
+      "6	Push Push Pull	"
+    ];
+
+    // column risizing code.  borrowed from https://codepen.io/adam-lynch/pen/XwKWdG
+    const minColWidth = 80;
+
+    const tableHeader = document.getElementById("tableHeader");
+    const tableBody = document.getElementById("tableBody");
+    const tableRows = tableBody.children[0];
+
+    const columns = [];
+    let headerBeingResized;
+
+    const onMouseMove = e => requestAnimationFrame(() => {
+      horizontalScrollOffset = document.documentElement.scrollLeft;
+      const width = horizontalScrollOffset + e.clientX - headerBeingResized.offsetLeft;
+
+      const column = columns.find(({ header }) => header === headerBeingResized);
+      column.size = Math.max(minColWidth, width) + 'px';
+
+      columns.forEach(column => {
+        if (column.size.startsWith('minmax')) {
+          column.size = parseInt(column.header.clientWidth, 10) + 'px';
+        }
+      });
+
+      tableHeader.style.gridTemplateColumns = columns.
+        map(({ header, size }) => size).
+        join(' ');
+      tableBody.style.gridTemplateColumns = columns.
+        map(({ header, size }) => size).
+        join(' ');
+    });
+
+    const onMouseUp = () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      headerBeingResized.classList.remove('header--being-resized');
+      headerBeingResized = null;
+    };
+
+    const initResize = ({ target }) => {
+      headerBeingResized = target.parentNode;
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+      headerBeingResized.classList.add('header--being-resized');
+    };
+
+    document.querySelectorAll('th').forEach(header => {
+      const max = '1fr';
+      columns.push({
+        header,
+        size: `minmax(${minColWidth}px, ${max})`
+      });
+
+      header.querySelector('.resize-handle').addEventListener('mousedown', initResize);
+    });
+
+    // end of column resizing code.
+
+    function onload() {
+      checkColumnWidths();
+
+      loadData();
+
+      createHorizLines123();
+
+      createHorizLines45(false);
+
+      collapseLists();
+
+      createHorizLines45(true);
+
+      // make table visible
+      tableBody.style.visibility = "visible";
+    }
+
+    function addCSSToCols(row, css) {
+      for (j = 0; j < row.children.length; j++) {
+        col = row.children[j];
+        colClass = col.className;
+        col.className = (col.className.length == 0) ? css : col.className + " " + css;
+      }
+    }
+
+    function removeCSSFromCols(row, css) {
+      for (j = 0; j < row.children.length; j++) {
+        col = row.children[j];
+        colClass = col.className;
+        ipos = col.className.indexOf(css)
+        if (ipos == 0)
+          col.className = "";
+        else if (ipos > 0)
+          col.className = col.className.substr(0, ipos - 1);
+      }
+    }
+
+    function createHorizLines123() {
+      numRows = tableRows.children.length;
+
+      // create horiz lines
+      for (i = 0; i < numRows; i++) {
+        row = tableRows.children[i];
+        rowClass = getBaseClassName(row.children[0]);
+        if (rowClass == "level1" || rowClass == "level2")
+          addCSSToCols(row, "rowDD");
+        else if (rowClass == "level3")
+          addCSSToCols(row, "rowDL");
+      }
+    }
+
+    function createHorizLines45(level4) {
+      numRows = tableRows.children.length;
+
+      // create horiz lines
+      for (i = 0; i < numRows; i++) {
+        row = tableRows.children[i];
+        rowClass = getBaseClassName(row.children[0]);
+        if (rowClass != "level3")
+          continue;
+        prevRow = tableRows.children[i - 1];
+        prevClass = getBaseClassName(prevRow.children[0]);
+        if ((level4 && prevClass == "level4") ||
+          (!level4 && (prevClass == "level5" || prevClass == "level6"))) {
+          addCSSToCols(prevRow, "rowLD")
+        }
+      }
+    }
+
+    function collapseLists() {
+      numRows = tableRows.children.length;
+
+      // collapse the lists, add the triangles
+      for (i = numRows - 1; i >= 0; i--) {
+        row = tableRows.children[i];
+        col0 = row.children[0]
+        rowClass = getBaseClassName(col0);
+
+        if (rowClass == "level2")
+          addTriangle(col0, true)
+        if (rowClass == "level4") {
+          onToggleRow(col0, true)
+          addTriangle(col0, false)
+        }
+      }
+    }
+
+    function getBaseClassName(elem) {
+      if (elem.className.length == 0)
+        return "";
+      ipos = elem.className.indexOf(" ");
+      return (ipos < 0 ? elem.className : elem.className.substring(0, ipos));
+    }
+
+    function addTriangle(col, expanded) {
+      newDiv = document.createElement("div");
+      newDiv.className = expanded ? "triangle-down" : "triangle-right";
+      col.appendChild(newDiv);
+
+      col.addEventListener('click', (event) => ((arg) => onToggleRow(arg))(col));
+    }
+
+    const s_mapRows = {};
+
+    function onToggleRow(elem, isInit) {
+      row = elem.parentNode;
+      rowId = row.id;
+      rowClass = getBaseClassName(elem);
+      isList = (rowClass == "level4");
+
+      if (elem.children.length > 0)
+        elem.children[0].className = (s_mapRows[rowId] != null) ? "triangle-down" : "triangle-right";
+
+      if (s_mapRows[rowId] != null) {
+        // expand
+        removeCSSFromCols(row, "rowLD");
+        arr = s_mapRows[rowId];
+        lastRow = row;
+        for (iRow = 0; iRow < arr.length; iRow++) {
+          r = arr[iRow]
+          lastRow.parentNode.insertBefore(r, lastRow.nextSibling);
+          lastRow = r;
+        }
+        s_mapRows[rowId] = null;
+      }
+      else {
+        // collapse
+        arr = new Array;
+        while (true) {
+          nextRow = row.nextElementSibling;
+          nextRowClass = nextRow ? getBaseClassName(nextRow.children[0]) : ""
+          if (nextRow && ((isList && nextRowClass == "level5") || (!isList && nextRowClass != "level2" && nextRowClass != "level1"))) {
+            nextRow.parentNode.removeChild(nextRow);
+            arr.push(nextRow);
+          }
+          else {
+            if (arr.length > 0)
+              s_mapRows[rowId] = arr;
+            break;
+          }
+        }
+        if (isList) {
+          nextRow = row.nextElementSibling;
+          if (nextRow && nextRow.children.length > 0) {
+            nextRowClass = getBaseClassName(nextRow.children[0]);
+            if (nextRowClass == "level4" || nextRowClass == "level5" || nextRowClass == "level6")
+              return;
+          }
+          if (!isInit) {
+            addCSSToCols(row, "rowLD");
+          }
+        }
+      }
+    }
+
+    function loadData() {
+      for (iData = 0; iData < dataRows.length; iData++) {
+        parts = dataRows[iData].split("\t");
+        level = parts[0];
+        title = parts[1];
+        strScores = parts[2];
+        allEmpty = (strScores.length == 0);
+        scores = allEmpty ? "" : strScores.split(",");
+        tr = document.createElement("tr");
+        tr.id = "row" + iData;
+
+        td = document.createElement("td");
+        td.className = "level" + level;
+        td.innerHTML = title;
+        tr.appendChild(td);
+
+        for (i = 0; i < numStudents; i++) {
+          td = document.createElement("td");
+          if (!allEmpty && scores[i].length > 0) {
+            score = scores[i];
+            text = score;
+            css = "student"
+            if (score.indexOf("/") >= 0)
+              css += (score.substr(0, 1) === "0") ? " lightGray bold" : " darkGray bold";
+            else if (score === "V") {
+              css += " green score";
+              text = "Viewed"
+            }
+            else {
+              iScore = parseInt(score, 10);
+              if (iScore >= 80)
+                css += " green";
+              else if (iScore >= 50)
+                css += " yellow";
+              else
+                css += " orange";
+              css += (level == "4") ? " bold" : " score";
+              text = score + "%";
+            }
+            td.innerHTML = text;
+            td.className = css;
+          }
+
+          tr.appendChild(td);
+        }
+        tableRows.appendChild(tr);
+      }
+    }
+
+    function checkColumnWidths() {
+      const w1Cols = 350;
+      const wCol = 100;
+      if (tableHeader.offsetWidth > w1Cols + (wCol * (numStudents + 1))) {
+        for (i = 0; i < columns.length; i++) {
+          col = columns[i];
+          if (col.size.startsWith('minmax')) {
+            col.size = (i == 0) ? '350px' : '100px';
+          }
+        }
+        tableHeader.style.gridTemplateColumns = columns.
+          map(({ header, size }) => size).
+          join(' ');
+        tableBody.style.gridTemplateColumns = columns.
+          map(({ header, size }) => size).
+          join(' ');
+      }
+    }        
+  </script>
+
+</body>
+
+</html>
